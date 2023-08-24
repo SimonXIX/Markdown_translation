@@ -1,18 +1,25 @@
+# @name: translate.py
+# @creation_date: 2023-08-24
+# @license: GNU Affero General Public License, Version 3 <https://www.gnu.org/licenses/agpl-3.0.en.html>
+# @author: Simon Bowie <ad7588@coventry.ac.uk>
+# @purpose: Sends batches of Markdown files to a locally-running LibreTranslate API and outputs translated Markdown files
+# @acknowledgements:
+
 import requests
 import json
 import frontmatter
 import os
 
 # variables
-source_language = 'en'
-target_language = 'eo'
+input_language = 'en'
+output_language = 'eo'
 url = "http://localhost:5000/translate"
 base_directory = '/Users/ad7588/projects/copim_website_inate/copim_website/content/'
-source_directory = base_directory + source_language + '/'
-target_directory = base_directory + target_language + '/'
+input_directory = base_directory + input_language + '/'
+output_directory = base_directory + output_language + '/'
  
-# iterate over files in the source directory
-for subdir, dirs, files in os.walk(source_directory):
+# iterate over files in the input directory
+for subdir, dirs, files in os.walk(input_directory):
     for file in files:
         # file name with extension
         file_name = os.path.basename(file)
@@ -24,8 +31,8 @@ for subdir, dirs, files in os.walk(source_directory):
         # send content of Markdown file to LibreTranslate API
         payload = {
             "q": text.content,
-            "source": source_language,
-            "target": target_language,
+            "source": input_language,
+            "target": output_language,
             "format": "text",
             "api_key": ""
         }
@@ -35,8 +42,8 @@ for subdir, dirs, files in os.walk(source_directory):
         data = response.json()
         text.content = data['translatedText']
 
-        write_directory = subdir.replace(source_directory, target_directory)
-        # Check if the target directory exists
+        write_directory = subdir.replace(input_directory, output_directory)
+        # Check if the output directory exists
         if not os.path.exists(write_directory):  
             # If it doesn't exist, create it
             os.makedirs(write_directory)
