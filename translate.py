@@ -39,7 +39,7 @@ for file_path in Path(input_directory).rglob("*.md"):
     text.content = data['translatedText']
 
     # create output subdirectory if it doesn't exist
-    relative_file_path = file_path.relative_to(input_directory)
+    relative_file_path = file_path.parent.relative_to(input_directory)
     write_directory = output_directory / relative_file_path
     write_directory.mkdir(parents=True, exist_ok=True)
     
