@@ -45,7 +45,7 @@ def postprocess_text(translated_text, placeholders):
 # function to translate text using LibreTranslate API
 def translate_text(text, input_language, output_language):
 
-    # send content of Markdown file to LibreTranslate API
+    # build Json payload to send to LibreTranslate API
     payload = {
         "q": text,
         "source": input_language,
@@ -55,6 +55,7 @@ def translate_text(text, input_language, output_language):
     }
     headers = {"Content-Type": "application/json"}
 
+    # send payload to LibreTranslate API
     response = requests.post(url, data=json.dumps(payload), headers=headers)
 
     return response.json()['translatedText']
@@ -68,10 +69,10 @@ for file_path in Path(input_directory).rglob("*.md"):
 
     placeholders = {}
 
-    # preprocess text to replace not-to-be-translated segments of text with placeholders
+    # preprocess text content of Markdown file to replace not-to-be-translated segments of text with placeholders
     text.content = preprocess_text(text.content, placeholders)
 
-    # translate the processed text
+    # translate the processed text using LibreTranslate API
     text.content = translate_text(text.content, input_language, output_language)
 
     # postprocess to reinsert the original segments
